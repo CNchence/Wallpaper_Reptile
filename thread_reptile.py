@@ -80,7 +80,7 @@ if __name__ == '__main__':
     pages = input("输入您需要的图片数(num=input*10):")
     savepath = input("输入您保存的目录(比如 D:\桌面):")
     if (theme == 'all'):
-        themelist = [i for i in range(1, len(all_a) + 1)]
+        themelist = [str(i) for i in range(1, len(all_a) + 1)]
     else:
         themelist = theme.split(' ')
     i = 0
