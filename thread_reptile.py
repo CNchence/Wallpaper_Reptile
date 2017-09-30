@@ -12,7 +12,7 @@ def SurfInternet(url_in):                      #创建下载网页函数
 
 class MyThread(threading.Thread):
 
-    def __init__(self,savepath,theme,imagehref,pages,headers,databig):
+    def __init__(self,savepath,theme,imagehref,pages,headers,databig,directory_merge_flag):
         threading.Thread.__init__(self)
         self.theme = theme              #主题名，由主题查找得到
         self.savepath = savepath        #保存文件夹的地址，一开始 由用户输入
@@ -20,7 +20,7 @@ class MyThread(threading.Thread):
         self.pages = pages              #所要下载的页数，一开始 由用户输入
         self.headers = headers          #浏览器访问头，主函数定义
         self.databig = databig          #图片分辨率，一开始 由用户输入
-
+        self.directory_merge_flag=directory_merge_flag #True表示将所有目录合并成一个，即下载到一个文件夹中。
 
 
     def run(self):
@@ -47,12 +47,21 @@ class MyThread(threading.Thread):
         print(self.theme,"下载完毕")
 
     def MkDir(self,theme,savepath):
-        theme = theme.strip()
-        isExists = os.path.exists(os.path.join(savepath, theme))
-        if not isExists:
-            os.makedirs(os.path.join(savepath, theme))
-        print("创建",theme,"文件夹")
-        return savepath + '\\' + theme
+        if (self.directory_merge_flag):
+            isExists = os.path.exists(savepath)
+            if not isExists:
+                try:
+                    os.makedirs(savepath)
+                except:
+                    pass
+            return savepath
+        else:
+            theme = theme.strip()
+            isExists = os.path.exists(os.path.join(savepath, theme))
+            if not isExists:
+                os.makedirs(os.path.join(savepath, theme))
+            print("创建",theme,"文件夹")
+            return savepath + '\\' + theme
 
     def SurfInternet(self,url_in):
         start_html = requests.get(url_in, headers=self.headers)  # 打开网址，搜索所有分类
@@ -76,13 +85,23 @@ if __name__ == '__main__':
         i = i + 1
 
     theme = input("输入您希望下载主题的序号(空格分离，输入all即全部选择):")
-    databig = input("输入您需要的分辨率(960x540,1024x576,1920x1080,2048x1152,3554x1999等):")
+    databig_dic=dict(zip([1,2,3,4,5],['960x540','1024x576','1920x1080','2048x1152','3554x1999']))
+    databig_tmp = input("输入您需要的分辨率(1: 960x540,2: 1024x576, 3: 1920x1080, 4: 2048x1152, 5:3554x1999等),输入数字即可:")
+    databig=databig_dic[eval(databig_tmp)]
     pages = input("输入您需要的图片数(num=input*10):")
     savepath = input("输入您保存的目录(比如 D:\桌面):")
+    directory_merge= input("要将这些图片下载到同一个文件夹么（默认每一个主题的图片在各自的文件夹中）?(输入y, 或 n):")  
+    _=input("你喜欢膜蛤么？（哈哈，不用回答，直接回车即可）")  
     if (theme == 'all'):
         themelist = [str(i) for i in range(1, len(all_a) + 1)]
     else:
         themelist = theme.split(' ')
+
+    if (directory_merge == 'y'):
+        directory_merge_flag= True
+    else:
+        directory_merge_flag= False
+
     i = 0
     threadlist = []
     for a in all_a:
@@ -91,7 +110,7 @@ if __name__ == '__main__':
             theme = a.get_text()
             theme = str(theme).replace("?","_")
             imagehref = a['href']
-            thread = MyThread(savepath,theme,imagehref,pages,headers,databig)
+            thread = MyThread(savepath,theme,imagehref,pages,headers,databig,directory_merge_flag)
             thread.setName(theme)
             threadlist.append(thread)
             thread.start()
