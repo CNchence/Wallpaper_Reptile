@@ -88,7 +88,7 @@ if __name__ == '__main__':
     databig_dic=dict(zip([1,2,3,4,5],['960x540','1024x576','1920x1080','2048x1152','3554x1999']))
     databig_tmp = input("输入您需要的分辨率(1: 960x540,2: 1024x576, 3: 1920x1080, 4: 2048x1152, 5:3554x1999等),输入数字即可:")
     databig=databig_dic[eval(databig_tmp)]
-    pages = input("输入您需要的图片数(num=input*10):")
+    pages = input("输入您需要的(每个主题的)图片数(注意num=input*10,例如输入10，则每一个主题下载100张图片):")
     savepath = input("输入您保存的目录(比如 D:\桌面):")
     directory_merge= input("要将这些图片下载到同一个文件夹么（默认每一个主题的图片在各自的文件夹中）?(输入y, 或 n):")  
     _=input("你喜欢膜蛤么？（哈哈，不用回答，直接回车即可）")  
